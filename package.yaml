@@ -1,13 +1,13 @@
 name: dsc
-version: 0.1.0
+version: 0.1.1
 synopsis: Helper functions for setting up Double Submit Cookie defense for forms
 description: See README at <https://github.com/qoelet/dsc#readme>
 maintainer: Kenny Shen <kenny@machinesung.com>
 license: MIT
-github: qoelet/storeviva-login
+github: qoelet/dsc
 category: Web
 
-ghc-options: -Wall -Werror
+ghc-options: -Wall
 
 dependencies:
   - base >= 4.7 && < 5
