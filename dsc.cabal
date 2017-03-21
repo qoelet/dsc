@@ -3,7 +3,7 @@
 -- see: https://github.com/sol/hpack
 
 name:                dsc
-version:             0.1.2
+version:             0.1.3
 synopsis:            Helper functions for setting up Double Submit Cookie defense for forms
 description:         See README at <https://github.com/qoelet/dsc#readme>
 homepage:            https://github.com/qoelet/dsc#readme
