@@ -4,6 +4,7 @@ module Web.Csrf (
 , mkCsrf
 , getCsrf
 , runCheck
+, unMkToken
 ) where
 
 import           Codec.Crypto.SimpleAES
@@ -42,3 +43,6 @@ getCsrf key = do
 
 mkCsrf :: Key -> ByteString -> ByteString -> Csrf
 mkCsrf key c t = runCheck key (Csrf (MkToken c) (MkToken t) Nothing)
+
+unMkToken :: Token -> ByteString
+unMkToken (MkToken x) = x
