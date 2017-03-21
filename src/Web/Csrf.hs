@@ -9,7 +9,7 @@ module Web.Csrf (
 
 import           Codec.Crypto.SimpleAES
 import           Data.ByteString
-import           Data.ByteString.Base64
+import           Data.ByteString.Base64.URL
 import           Data.String.Conversions
 
 newtype Token = MkToken ByteString
@@ -24,9 +24,13 @@ data Csrf = Csrf {
 , validationResult :: Maybe CsrfCheckResult
 } deriving (Eq, Show)
 
-runCheck :: Key -> Csrf -> Csrf
-runCheck key csrf@(Csrf (MkToken c) (MkToken t) _) = csrf { validationResult = Just result }
+runCheck :: ByteString -> Csrf -> Csrf
+runCheck keyBS csrf@(Csrf (MkToken c) (MkToken t) _) = csrf { validationResult = Just result }
   where
+    key :: ByteString
+    key = decodeLenient keyBS
+
+    result :: CsrfCheckResult
     result = case (decode c, decode t) of
       (Right c', Right t') ->
         if decryptMsg ECB key (cs c') == decryptMsg ECB key (cs t')
@@ -34,15 +38,22 @@ runCheck key csrf@(Csrf (MkToken c) (MkToken t) _) = csrf { validationResult = J
           else Invalid
       _ -> Invalid
 
-getCsrf :: Key -> IO Csrf
+getCsrf :: ByteString -> IO Csrf
 getCsrf key = do
   secret <- randomKey
-  c <- encryptMsg ECB key (cs secret)
-  t <- encryptMsg ECB key (cs secret)
-  return $ Csrf (MkToken (encode . cs $ c)) (MkToken (encode . cs $ t)) Nothing
+  c <- encryptMsg ECB (decodeLenient key) (cs secret)
+  t <- encryptMsg ECB (decodeLenient key) (cs secret)
+  return $ Csrf
+    (MkToken (encode . cs $ c))
+    (MkToken (encode . cs $ t))
+    Nothing
 
-mkCsrf :: Key -> ByteString -> ByteString -> Csrf
-mkCsrf key c t = runCheck key (Csrf (MkToken c) (MkToken t) Nothing)
+mkCsrf :: ByteString -> ByteString -> ByteString -> Csrf
+mkCsrf keyBS c t
+  = runCheck key (Csrf (MkToken c) (MkToken t) Nothing)
+  where
+    key :: ByteString
+    key = decodeLenient keyBS
 
 unMkToken :: Token -> ByteString
 unMkToken (MkToken x) = x

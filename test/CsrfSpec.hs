@@ -3,7 +3,7 @@
 module CsrfSpec where
 
 import           Codec.Crypto.SimpleAES
-import           Data.ByteString.Base64
+import           Data.ByteString.Base64.URL
 import           Data.String.Conversions
 import           Test.Hspec
 import           Test.QuickCheck
@@ -23,8 +23,8 @@ spec = do
 propGetCsrfShouldAlwaysBeValid :: Property
 propGetCsrfShouldAlwaysBeValid = Q.monadicIO $ do
   testKey <- Q.run randomKey
-  myCsrf <- Q.run (getCsrf testKey)
-  Q.assert $ validationResult (runCheck testKey myCsrf) == Just Valid
+  myCsrf <- Q.run (getCsrf (encode testKey))
+  Q.assert $ validationResult (runCheck (encode testKey) myCsrf) == Just Valid
 
 propTokenMisMatchShouldBeInvalid :: Property
 propTokenMisMatchShouldBeInvalid = Q.monadicIO $ do
@@ -33,4 +33,4 @@ propTokenMisMatchShouldBeInvalid = Q.monadicIO $ do
   cookieToken <- Q.run $ encryptMsg ECB testKey (cs secret)
   let badToken = "Foo"
       myCsrf = mkCsrf testKey (encode . cs $ cookieToken) badToken
-  Q.assert $ validationResult (runCheck testKey myCsrf) == Just Invalid
+  Q.assert $ validationResult (runCheck (encode testKey) myCsrf) == Just Invalid
