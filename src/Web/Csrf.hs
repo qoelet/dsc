@@ -50,10 +50,7 @@ getCsrf key = do
 
 mkCsrf :: ByteString -> ByteString -> ByteString -> Csrf
 mkCsrf keyBS c t
-  = runCheck key (Csrf (MkToken c) (MkToken t) Nothing)
-  where
-    key :: ByteString
-    key = decodeLenient keyBS
+  = runCheck keyBS (Csrf (MkToken c) (MkToken t) Nothing)
 
 unMkToken :: Token -> ByteString
 unMkToken (MkToken x) = x
