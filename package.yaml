@@ -1,5 +1,5 @@
 name: dsc
-version: 0.1.1
+version: 0.1.2
 synopsis: Helper functions for setting up Double Submit Cookie defense for forms
 description: See README at <https://github.com/qoelet/dsc#readme>
 maintainer: Kenny Shen <kenny@machinesung.com>
