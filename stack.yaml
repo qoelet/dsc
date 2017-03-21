@@ -1,0 +1,11 @@
+flags: {}
+extra-package-dbs: []
+packages:
+- '.'
+extra-deps:
+- SimpleAES-0.4.2
+resolver: lts-8.5
+#nix:
+#  packages:
+#  - zlib
+#  enable: true
